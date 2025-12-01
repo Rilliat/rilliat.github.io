@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дневник Двоечника</title>
+    <style>
+        /* Подключаем рукописный шрифт */
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Caveat', cursive;
+            overflow: hidden;
+            
+            /* Фон в клетку */
+            background-color: #fff;
+            background-image: 
+                linear-gradient(#e1e1e1 1px, transparent 1px),
+                linear-gradient(90deg, #e1e1e1 1px, transparent 1px);
+            background-size: 20px 20px;
+            
+            /* КУРСОР - ДВОЙКА (SVG закодирован в base64) */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text x="50%" y="50%" font-family="Arial, sans-serif" font-weight="bold" font-size="24" fill="red" text-anchor="middle" dominant-baseline="central">2</text></svg>') 16 16, auto;
+        }
+
+        /* Красная вертикальная линия (поля тетради) */
+        body::before {
+            content: '';
+            position: absolute;
+            left: 40px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #ffcccc;
+            border-right: 1px solid #ff0000;
+        }
+
+        .card {
+            background: #fff;
+            padding: 2rem;
+            border: 2px solid #2c3e50;
+            border-radius: 10px;
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            z-index: 10;
+            transform: rotate(-2deg); /* Легкий наклон */
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        h1 {
+            color: #1a1a1a;
+            font-size: 3rem;
+            margin: 0;
+            line-height: 1;
+        }
+
+        p {
+            font-size: 1.5rem;
+            color: #666;
+            margin: 10px 0 20px 0;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            text-decoration: none;
+            color: white;
+            background-color: #2980b9; /* Синяя ручка */
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.3rem;
+            transition: background 0.2s;
+            border: 1px solid #1a5276;
+        }
+
+        .btn:hover {
+            background-color: #3498db;
+            /* При наведении курсор тоже остается двойкой */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text x="50%" y="50%" font-family="Arial, sans-serif" font-weight="bold" font-size="24" fill="red" text-anchor="middle" dominant-baseline="central">2</text></svg>') 16 16, pointer;
+        }
+
+        /* Эффект появляющейся двойки */
+        .grade-two {
+            position: absolute;
+            color: red;
+            font-size: 5rem;
+            font-weight: bold;
+            pointer-events: none; /* Чтобы сквозь нее можно было кликать */
+            animation: stamp 1s ease-out forwards;
+            user-select: none;
+        }
+
+        @keyframes stamp {
+            0% { transform: scale(3) rotate(-10deg); opacity: 0; }
+            20% { transform: scale(1) rotate(-10deg); opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- Фото профиля (заглушка) -->
+        <div style="width: 100px; height: 100px; background: #ddd; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; border: 2px dashed #333;">
+            <span>Фото</span>
+        </div>
+        
+        <h1>Твое Имя</h1>
+        <p>Хулиган и двоечник</p>
+
+        <div class="links">
+            <a href="#" class="btn">Мой Telegram</a>
+            <a href="#" class="btn">Мой Instagram</a>
+        </div>
+    </div>
+
+    <script>
+        // Функция, которая создает звук и визуальный эффект
+        document.addEventListener('click', function(e) {
+            
+            // 1. ГОЛОС УЧИТЕЛЯ (Web Speech API)
+            // Проверяем, поддерживает ли браузер синтез речи
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance("Два в дневник!");
+                utterance.lang = 'ru-RU'; // Русский язык
+                utterance.pitch = 0.8; // Немного пониже (строгий голос)
+                utterance.rate = 1.2; // Немного быстрее (злой голос)
+                utterance.volume = 1; 
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.log("Ваш браузер не умеет говорить :(");
+            }
+
+            // 2. ВИЗУАЛЬНЫЙ ЭФФЕКТ (Появление "2")
+            const two = document.createElement('div');
+            two.innerText = "2";
+            two.classList.add('grade-two');
+            
+            // Позиционируем там, где был клик
+            two.style.left = (e.pageX - 20) + 'px';
+            two.style.top = (e.pageY - 40) + 'px';
+            
+            // Случайный наклон для реалистичности
+            const rotation = (Math.random() - 0.5) * 40;
+            two.style.transform = `rotate(${rotation}deg)`;
+
+            document.body.appendChild(two);
+
+            // Удаляем элемент после анимации, чтобы не засорять память
+            setTimeout(() => {
+                two.remove();
+            }, 1000);
+        });
+    </script>
+
+</body>
+</html>
